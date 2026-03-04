@@ -1,0 +1,22 @@
+/*Question : what are the most optimal skills to learn for data analyst?
+optimal : high paying and high demand*/
+
+with optimalskill as (
+    select skills_job_dim.skill_id as skillid,
+skills,
+count(skills_job_dim.job_id) as skill_count_demand,
+round(avg(salary_year_avg),0) Avg_salary
+from job_postings_fact
+inner join skills_job_dim on job_postings_fact.job_id=skills_job_dim.job_id
+INNER join skills_dim on skills_job_dim.skill_id=skills_dim.skill_id
+where job_title_short='Data Analyst'
+and salary_year_avg IS NOT NULL
+and job_work_from_home=true
+
+GROUP BY
+skills,skills_job_dim.skill_id
+ORDER BY Avg_salary DESC
+)
+SELECT * FROM optimalskill
+WHERE skill_count_demand >10
+LIMIT 25
